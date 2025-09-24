@@ -1,261 +1,16 @@
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 import javax.swing.*;
+import java.util.List;
 
-// Enum para os perfis de usuário
-enum PerfilUsuario {
-    ADMINISTRADOR,
-    GERENTE,
-    COLABORADOR
-}
-
-// Classe base Pessoa (para demonstrar herança)
-class Pessoa {
-    protected String nomeCompleto;
-    protected String cpf;
-    protected String email;
-    
-    public Pessoa(String nomeCompleto, String cpf, String email) {
-        this.nomeCompleto = nomeCompleto;
-        this.cpf = cpf;
-        this.email = email;
-    }
-    
-    // Método que será sobrescrito (para demonstrar polimorfismo)
-    public String getIdentificacao() {
-        return "Pessoa: " + nomeCompleto;
-    }
-    
-    // Getters e Setters
-    public String getNomeCompleto() {
-        return nomeCompleto;
-    }
-    
-    public void setNomeCompleto(String nomeCompleto) {
-        this.nomeCompleto = nomeCompleto;
-    }
-    
-    public String getCpf() {
-        return cpf;
-    }
-    
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-}
-
-// Classe que representa um usuário (herda de Pessoa)
-class Usuario extends Pessoa {
-    private String cargo;
-    private String login;
-    private String senha;
-    private PerfilUsuario perfil;
-    
-    // Construtor parametrizado
-    public Usuario(String nomeCompleto, String cpf, String email, String cargo, 
-                  String login, String senha, PerfilUsuario perfil) {
-        super(nomeCompleto, cpf, email); // Chamada ao construtor da classe pai
-        this.cargo = cargo;
-        this.login = login;
-        this.senha = senha;
-        this.perfil = perfil;
-    }
-    
-    // Sobrescrita de método (polimorfismo)
-    @Override
-    public String getIdentificacao() {
-        return "Usuário: " + nomeCompleto + " (" + perfil + ")";
-    }
-    
-    // Sobrecarga de método (overload) - versão simplificada do construtor
-    public Usuario(String nomeCompleto, String cpf, String email) {
-        this(nomeCompleto, cpf, email, "", "", "", PerfilUsuario.COLABORADOR);
-    }
-    
-    // Getters e Setters
-    public String getCargo() {
-        return cargo;
-    }
-    
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
-    }
-    
-    public String getLogin() {
-        return login;
-    }
-    
-    public void setLogin(String login) {
-        this.login = login;
-    }
-    
-    public String getSenha() {
-        return senha;
-    }
-    
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-    
-    public PerfilUsuario getPerfil() {
-        return perfil;
-    }
-    
-    public void setPerfil(PerfilUsuario perfil) {
-        this.perfil = perfil;
-    }
-    
-    @Override
-    public String toString() {
-        return "Nome: " + nomeCompleto + 
-               "\nCPF: " + cpf + 
-               "\nE-mail: " + email + 
-               "\nCargo: " + cargo + 
-               "\nLogin: " + login + 
-               "\nPerfil: " + perfil + 
-               "\n------------------------";
-    }
-}
-
-// Classe para validação de dados
-class Validador {
-    // Método para validar CPF (formato básico)
-    public static boolean validarCPF(String cpf) {
-        return cpf != null && cpf.matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}");
-    }
-    
-    // Método para validar e-mail
-    public static boolean validarEmail(String email) {
-        String regex = "^[A-Za-z0-9+_.-]+@(.+)$";
-        return Pattern.compile(regex).matcher(email).matches();
-    }
-    
-    // Método para validar força da senha
-    public static boolean validarSenha(String senha) {
-        return senha != null && senha.length() >= 6;
-    }
-    
-    // Método para verificar se login já existe (sobrecarga)
-    public static boolean validarLogin(String login, List<Usuario> usuarios) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getLogin().equals(login)) {
-                return false; // Login já existe
-            }
-        }
-        return true; // Login disponível
-    }
-}
-
-// Classe para gerenciar a autenticação de usuários
-class Autenticacao {
-    // Método para autenticar usuário
-    public static Usuario autenticar(String login, String senha, List<Usuario> usuarios) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getLogin().equals(login) && usuario.getSenha().equals(senha)) {
-                return usuario;
-            }
-        }
-        return null; // Autenticação falhou
-    }
-}
-
-// Classe principal do sistema
-class SistemaCadastroUsuarios {
-    private List<Usuario> usuarios;
-    
-    public SistemaCadastroUsuarios() {
-        usuarios = new ArrayList<>(); // Uso de coleção (ArrayList)
-        
-        // Adicionar um usuário administrador padrão
-        usuarios.add(new Usuario(
-            "Administrador Padrão", 
-            "123.456.789-00", 
-            "admin@empresa.com", 
-            "Administrador", 
-            "admin", 
-            "admin123", 
-            PerfilUsuario.ADMINISTRADOR
-        ));
-    }
-    
-    // Método para cadastrar um novo usuário
-    public boolean cadastrarUsuario(String nomeCompleto, String cpf, String email, 
-                                  String cargo, String login, String senha, PerfilUsuario perfil) {
-        
-        if (!Validador.validarCPF(cpf)) {
-            return false;
-        }
-        
-        if (!Validador.validarEmail(email)) {
-            return false;
-        }
-        
-        if (!Validador.validarSenha(senha)) {
-            return false;
-        }
-        
-        if (!Validador.validarLogin(login, usuarios)) {
-            return false;
-        }
-        
-        // Criar e adicionar o usuário
-        Usuario novoUsuario = new Usuario(nomeCompleto, cpf, email, cargo, login, senha, perfil);
-        usuarios.add(novoUsuario);
-        
-        return true;
-    }
-    
-    // Método para listar todos os usuários
-    public String listarUsuarios() {
-        if (usuarios.isEmpty()) {
-            return "Nenhum usuário cadastrado.";
-        }
-        
-        StringBuilder lista = new StringBuilder();
-        for (int i = 0; i < usuarios.size(); i++) {
-            lista.append("Usuário #").append(i + 1).append("\n");
-            lista.append(usuarios.get(i).toString()).append("\n");
-        }
-        
-        return lista.toString();
-    }
-    
-    // Método para autenticar usuário
-    public String autenticarUsuario(String login, String senha) {
-        Usuario usuarioAutenticado = Autenticacao.autenticar(login, senha, usuarios);
-        
-        if (usuarioAutenticado != null) {
-            return "Autenticação bem-sucedida!\nBem-vindo, " + usuarioAutenticado.getNomeCompleto() +
-                   "\nSeu perfil: " + usuarioAutenticado.getPerfil();
-        } else {
-            return "Falha na autenticação! Login ou senha incorretos.";
-        }
-    }
-    
-    // Método para obter a lista de usuários (para uso interno)
-    public List<Usuario> getUsuarios() {
-        return usuarios;
-    }
-}
 
 // Interface gráfica
 public class InterfaceGrafica extends JFrame {
-    private final SistemaCadastroUsuarios sistema;
+    private final UsuarioDAO usuarioDAO;
     private JTextArea areaTexto;
 
-    public InterfaceGrafica() {
-            sistema = new SistemaCadastroUsuarios();
-        configurarJanela();
+        public InterfaceGrafica() {
+            usuarioDAO = new UsuarioDAO();
+            configurarJanela();
     }
 
     private void configurarJanela() {
@@ -327,29 +82,61 @@ public class InterfaceGrafica extends JFrame {
         
         int result = JOptionPane.showConfirmDialog(this, panel, "Cadastrar Usuário", 
                                                  JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        
         if (result == JOptionPane.OK_OPTION) {
-            boolean sucesso = sistema.cadastrarUsuario(
-                nomeField.getText(),
-                cpfField.getText(),
-                emailField.getText(),
-                cargoField.getText(),
-                loginField.getText(),
-                new String(senhaField.getPassword()),
-                (PerfilUsuario) perfilCombo.getSelectedItem()
-            );
-            
+            String nome = nomeField.getText();
+            String cpf = cpfField.getText();
+            String email = emailField.getText();
+            String cargo = cargoField.getText();
+            String login = loginField.getText();
+            String senha = new String(senhaField.getPassword());
+            PerfilUsuario perfil = (PerfilUsuario) perfilCombo.getSelectedItem();
+
+            if (!Validador.validarCPF(cpf)) {
+                JOptionPane.showMessageDialog(this, "CPF inválido! Use o formato: 000.000.000-00", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!Validador.validarEmail(email)) {
+                JOptionPane.showMessageDialog(this, "E-mail inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!Validador.validarSenha(senha)) {
+                JOptionPane.showMessageDialog(this, "Senha muito curta! Mínimo 6 caracteres.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (usuarioDAO.loginExiste(login)) {
+                JOptionPane.showMessageDialog(this, "Login já existe! Escolha outro.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Usuario novoUsuario = new Usuario(nome, cpf, email, cargo, login, senha, perfil);
+            boolean sucesso = usuarioDAO.inserirUsuario(novoUsuario);
             if (sucesso) {
-                areaTexto.append("Usuário cadastrado com sucesso!\n");
+                JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                nomeField.setText("");
+                cpfField.setText("");
+                emailField.setText("");
+                cargoField.setText("");
+                loginField.setText("");
+                senhaField.setText("");
+                perfilCombo.setSelectedIndex(0);
             } else {
-                areaTexto.append("Erro ao cadastrar usuário. Verifique os dados.\n");
+                JOptionPane.showMessageDialog(this, "Erro inesperado ao cadastrar usuário.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
     private void listarUsuarios() {
-        String lista = sistema.listarUsuarios();
-        areaTexto.setText("=== LISTA DE USUÁRIOS ===\n\n" + lista);
+        List<Usuario> lista = usuarioDAO.listarUsuarios();
+        StringBuilder texto = new StringBuilder("=== LISTA DE USUÁRIOS ===\n\n");
+        if (lista.isEmpty()) {
+            texto.append("Nenhum usuário cadastrado.\n");
+        } else {
+            for (int i = 0; i < lista.size(); i++) {
+                texto.append("Usuário #").append(i + 1).append("\n");
+                texto.append(lista.get(i).toString()).append("\n");
+            }
+        }
+        areaTexto.setText(texto.toString());
     }
 
     private void autenticarUsuario() {
@@ -365,14 +152,19 @@ public class InterfaceGrafica extends JFrame {
         
         int result = JOptionPane.showConfirmDialog(this, panel, "Autenticar Usuário", 
                                                  JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        
         if (result == JOptionPane.OK_OPTION) {
-            String resultado = sistema.autenticarUsuario(
+            Usuario usuario = usuarioDAO.autenticar(
                 loginField.getText(),
                 new String(senhaField.getPassword())
             );
-            
-            areaTexto.setText("=== RESULTADO DA AUTENTICAÇÃO ===\n\n" + resultado);
+            if (usuario != null) {
+                JOptionPane.showMessageDialog(this, "Autenticação bem-sucedida!\nBem-vindo, " + usuario.getNomeCompleto() +
+                            "\nSeu perfil: " + usuario.getPerfil(), "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                loginField.setText("");
+                senhaField.setText("");
+            } else {
+                JOptionPane.showMessageDialog(this, "Falha na autenticação! Login ou senha incorretos.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
