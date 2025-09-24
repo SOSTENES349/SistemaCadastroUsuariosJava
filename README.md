@@ -12,4 +12,4 @@ Como Executar
 Pré-requisitos
 Java Development Kit (JDK) 8 ou superior instalado
 Terminal ou prompt de comando
->>>>>>> f1751462360dd034de19a50e757cbe4a419c90b8
+
