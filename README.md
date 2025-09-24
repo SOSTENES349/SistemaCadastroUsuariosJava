@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-"Primeiro teste" 
-=======
+
 Sistema de Cadastro de Usuários
 Objetivo do Projeto
 Este projeto tem como objetivo implementar um sistema completo de cadastro de usuários em Java, utilizando os princípios da Programação Orientada a Objetos (POO). O sistema permite:
