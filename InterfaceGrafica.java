@@ -9,8 +9,8 @@ public class InterfaceGrafica extends JFrame {
     private JTextArea areaTexto;
 
         public InterfaceGrafica() {
-            usuarioDAO = new UsuarioDAO();
-            configurarJanela();
+        usuarioDAO = new UsuarioDAO();
+        configurarJanela();
     }
 
     private void configurarJanela() {
@@ -36,10 +36,31 @@ public class InterfaceGrafica extends JFrame {
         JButton btnSair = new JButton("Sair");
         
         // Adicionar ações aos botões
-    btnCadastrar.addActionListener(_ -> cadastrarUsuario());
-    btnListar.addActionListener(_ -> listarUsuarios());
-    btnAutenticar.addActionListener(_ -> autenticarUsuario());
-    btnSair.addActionListener(_ -> System.exit(0));
+        btnCadastrar.addActionListener(_ -> {
+            try {
+                cadastrarUsuario();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar usuário: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        });
+        btnListar.addActionListener(_ -> {
+            try {
+                listarUsuarios();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao listar usuários: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        });
+        btnAutenticar.addActionListener(_ -> {
+            try {
+                autenticarUsuario();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao autenticar usuário: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        });
+        btnSair.addActionListener(_ -> System.exit(0));
         
         painelBotoes.add(btnCadastrar);
         painelBotoes.add(btnListar);
